@@ -1,0 +1,13 @@
+FROM node:26.12.1-alpine3.20
+
+RUN addgroup app && adduser -S -G app app
+USER app
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "start"]
