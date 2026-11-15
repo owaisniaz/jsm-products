@@ -1,0 +1,41 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build project",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Test signup flow",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"vitest",
+				"run",
+				"src/auth/auth.controller.spec.ts",
+				"src/auth/auth.service.spec.ts"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Lint changed auth files",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"oxlint",
+				"--type-aware",
+				"src/auth"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

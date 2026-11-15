@@ -33,8 +33,8 @@ $ npm install
 
 ## MongoDB
 
-The application connects through Mongoose using `MONGODB_URI`. Start the
-application and MongoDB together from the repository root with:
+The application uses MongoDB configured by `MONGODB_URI`. Start the application
+and MongoDB together from the repository root with:
 
 ```bash
 docker compose up --build
@@ -43,11 +43,91 @@ docker compose up --build
 Compose waits for MongoDB's health check before starting the backend, which
 connects to the `db` service at `mongodb://db:27017/jsm-product`. When running
 the backend outside Docker, set `MONGODB_URI` to your MongoDB connection
-string; it defaults to `mongodb://localhost:27017/jsm-product`.
+string. The backend validates this variable at startup.
 
-The user feature registers a Mongoose `User` model with required `name` and
+## Environment variables
+
+`ConfigModule` loads `backend/.env.stage.dev` for development and test, and
+`backend/.env.stage.prod` in production. Set `NODE_ENV` to `development`,
+`test`, or `production` to select the runtime environment. Variables set
+directly in the process environment take precedence over file values. Keep
+secrets out of source control.
+
+On PowerShell, start development with:
+
+```powershell
+$env:NODE_ENV = 'development'
+npm run start:dev
+```
+
+Configure `MONGODB_URI`, `JWT_ACCESS_SECRET`, and `JWT_REFRESH_SECRET` in the
+selected environment file or deployment environment. JWT secrets must each be
+at least 32 characters. `JWT_ACCESS_TTL_SECONDS` and
+`JWT_REFRESH_TTL_SECONDS` default to 900 and 604800 seconds. In production, set `NODE_ENV=production` and provide secrets through the
+deployment environment.
+
+The user feature registers a Mongoose `User` model with required `username` and
 unique, lowercase `email` fields. Mongoose manages the `createdAt` and
 `updatedAt` timestamps.
+
+## Authentication
+
+Signup and signin set access and refresh tokens in HttpOnly cookies and return
+only the user's profile in JSON. The refresh cookie is rotated by
+`POST /api/v1/auth/refresh`; its hashed value is tracked per device, so signing
+in on another device does not invalidate existing sessions. A rotated or
+expired refresh token is rejected.
+
+For browser clients, configure `CLIENT_ORIGIN` (defaults to
+`http://localhost:5173`) and send requests with credentials enabled. For
+example:
+
+```js
+await fetch('http://localhost:3000/api/v1/auth/signin', {
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password }),
+});
+```
+
+The browser stores and sends the HttpOnly cookies automatically; frontend
+JavaScript cannot read the token values. Use `credentials: 'include'` for the
+refresh request as well:
+
+```js
+await fetch('http://localhost:3000/api/v1/auth/refresh', {
+  method: 'POST',
+  credentials: 'include',
+});
+```
+
+Log out the current device with:
+
+```js
+await fetch('http://localhost:3000/api/v1/auth/logout', {
+  method: 'POST',
+  credentials: 'include',
+});
+```
+
+`POST /api/v1/auth/logout-all` revokes all refresh sessions for the authenticated
+account and clears the current browser's cookies. `GET /api/v1/auth/sessions`
+lists active devices without returning refresh tokens or their hashes. Revoke a
+specific listed device with `DELETE /api/v1/auth/sessions/:jti`.
+
+Logout revokes only the matching device's refresh session and clears both
+cookies. If the refresh cookie is missing or invalid, the endpoint still clears
+the cookies. Access tokens are stateless and can remain valid until their short
+expiry, including after logout-all; the current architecture has no access-token
+revocation list.
+
+Session IP addresses use Express `request.ip`. The application does not enable
+proxy trust, so client-supplied `X-Forwarded-For` values are not trusted. When
+running behind a reverse proxy, configure Express to trust only the known proxy
+addresses before relying on forwarded client IPs.
+
+Do not copy tokens into local storage.
 
 ## Compile and run the project
 
