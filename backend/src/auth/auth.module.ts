@@ -36,5 +36,6 @@ import { TokenService } from './token.service.js';
     TokenService,
     AccessTokenGuard,
   ],
+  exports: [AccessTokenGuard, CookieService, TokenService],
 })
 export class AuthModule {}

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
+import { AppError } from '../common/errors/app-error.js';
 import type { JwtPayload } from './auth.constants.js';
 
 @Injectable()
@@ -11,9 +12,9 @@ export class TokenService {
 
   async generatePair(user: { id: string; role?: string }) {
     const jti = randomUUID();
-    const refreshTtl = this.config.getOrThrow<number>(
+    const refreshTtl = Number(this.config.getOrThrow<number>(
       'JWT_REFRESH_TTL_SECONDS',
-    );
+    ));
     const accessPayload: JwtPayload = {
       sub: user.id,
       type: 'access',
@@ -55,27 +56,16 @@ export class TokenService {
   compare(token: string, tokenHash: string): Promise<boolean> {
     return bcrypt.compare(token, tokenHash);
   }
+private async verify(token: string, secretKey: string, expected: JwtPayload['type']) {
+  // JWT errors are translated to TOKEN_EXPIRED / TOKEN_INVALID by the global filter
+  const payload = await this.jwt.verifyAsync<JwtPayload>(token, {
+    secret: this.config.getOrThrow<string>(secretKey),
+  });
 
-  private async verify(token: string, secretKey: string, expected: JwtPayload['type']) {
-    let payload: JwtPayload;
-    try {
-      payload = await this.jwt.verifyAsync<JwtPayload>(token, {
-        secret: this.config.getOrThrow<string>(secretKey),
-      });
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError')
-      ) {
-        throw new UnauthorizedException('Invalid or expired token');
-      }
-      throw error;
-    }
-
-    if (payload.type !== expected) {
-      throw new UnauthorizedException('Invalid or expired token');
-    }
-
-    return payload;
+  if (payload.type !== expected) {
+    throw new AppError('TOKEN_WRONG_TYPE');
   }
+
+  return payload;
+}
 }

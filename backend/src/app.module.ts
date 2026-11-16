@@ -5,6 +5,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { UserModule } from './user/user.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { CompaniesModule } from './companies/companies.module.js';
 import { DatabaseModule } from './database/database.module.js';
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor.js';
 import { ZodValidationPipe, ZodSerializerInterceptor } from 'nestjs-zod';
@@ -37,6 +38,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     DatabaseModule,
     UserModule,
     AuthModule,
+    CompaniesModule,
   ],
   controllers: [AppController],
   providers: [
