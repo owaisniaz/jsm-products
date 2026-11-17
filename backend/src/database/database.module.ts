@@ -1,8 +1,10 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 
 const logger = new Logger('DatabaseModule');
+mongoose.set('strictQuery', true);
 
 @Module({
   imports: [
