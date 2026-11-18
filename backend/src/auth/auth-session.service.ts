@@ -24,8 +24,12 @@ export class AuthSessionService {
   async create(
     user: UserDocument,
     metadata: SessionMetadata = {},
+    tenant?: { activeCompanyId: string; accountType: 'OWNER' | 'STAFF' },
   ): Promise<AuthSession> {
-    const tokens = await this.tokenService.generatePair({ id: user.id });
+    const tokens = await this.tokenService.generatePair({
+      id: user.id,
+      ...tenant,
+    });
     const saved = await this.userRepository.addRefreshSession(
       user.id,
       await this.toRefreshSession(tokens, metadata),
@@ -46,7 +50,7 @@ export class AuthSessionService {
     const user = await this.userRepository.findByIdWithRefreshSessions(
       payload.sub,
     );
-    if (!user || !user.isActive) {
+    if (!user || !user.isActive || user.status === 'SUSPENDED') {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
@@ -62,7 +66,15 @@ export class AuthSessionService {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const tokens = await this.tokenService.generatePair({ id: user.id });
+    const tokens = await this.tokenService.generatePair({
+      id: user.id,
+      ...(payload.activeCompanyId
+        ? {
+            activeCompanyId: payload.activeCompanyId,
+            accountType: payload.accountType,
+          }
+        : {}),
+    });
     const rotated = await this.userRepository.rotateRefreshSession(
       user.id,
       {
@@ -183,7 +195,7 @@ export class AuthSessionService {
   private toResponse(user: UserDocument): SignupResponse {
     return {
       id: user.id,
-      username: user.username,
+      username: user.username ?? user.email.split('@')[0],
       email: user.email,
       ...(user.photo === undefined ? {} : { photo: user.photo }),
       roles: user.roles?.map((role) => role.toString()) ?? [],

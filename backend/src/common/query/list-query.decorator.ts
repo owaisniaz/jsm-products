@@ -1,8 +1,8 @@
 import {
   BadRequestException,
   createParamDecorator,
-  ExecutionContext,
 } from '@nestjs/common';
+import type { ExecutionContext } from '@nestjs/common';
 import type { Request } from 'express';
 import { ZodError } from 'zod';
 import type { QueryConfig } from './query-config.js';

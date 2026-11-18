@@ -1,4 +1,5 @@
-import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
+import { Catch, Logger } from '@nestjs/common';
+import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import type { AppError } from '../errors/app-error.js';
 import { normalizeError } from '../errors/normalize-error.js';
@@ -13,7 +14,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const error = normalizeError(exception);
 
-    if (host.getType() !== 'http') {
+    if (typeof host.getType === 'function' && host.getType() !== 'http') {
       this.log(error);
       throw exception;
     }

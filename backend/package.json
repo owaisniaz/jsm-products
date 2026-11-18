@@ -22,9 +22,12 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1172.0",
+    "@aws-sdk/s3-request-presigner": "^3.1172.0",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.1.1",
     "@nestjs/core": "^12.0.1",
+    "@nestjs/event-emitter": "^12.0.3",
     "@nestjs/jwt": "^12.0.5",
     "@nestjs/mongoose": "^12.0.0",
     "@nestjs/observe": "^0.3.0",
@@ -35,6 +38,7 @@
     "mongodb": "^7.7.0",
     "mongoose": "^9.11.3",
     "nestjs-zod": "^5.5.0",
+    "nodemailer": "^10.6.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
@@ -48,6 +52,7 @@
     "@nestjs/testing": "^12.0.1",
     "@types/express": "^5.0.0",
     "@types/node": "^24.0.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/supertest": "^7.0.0",
     "@vitest/coverage-v8": "^4.1.2",
     "cross-env": "^10.1.0",

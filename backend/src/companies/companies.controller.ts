@@ -5,12 +5,12 @@ import {
   Get,
   Param,
   Patch,
-  PipeTransform,
   Post,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
+import type { PipeTransform } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { AppError } from '../common/errors/app-error.js';
 import {

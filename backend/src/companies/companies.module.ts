@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthModule } from '../auth/auth.module.js';
+import { AuthSecurityModule } from '../auth/auth-security.module.js';
 import { GroupsModule } from '../groups/groups.module.js';
 import { Company, CompanySchema } from './company.schema.js';
 import { CompaniesController } from './companies.controller.js';
@@ -11,7 +11,7 @@ import { CompaniesService } from './companies.service.js';
   imports: [
     MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema }]),
     GroupsModule,
-    AuthModule,
+    AuthSecurityModule,
   ],
   controllers: [CompaniesController],
   providers: [CompaniesRepository, CompaniesService],

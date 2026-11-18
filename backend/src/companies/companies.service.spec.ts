@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
 import mongoose, { Types } from 'mongoose';
 import { AppError } from '../common/errors/app-error.js';
 import { GroupsService } from '../groups/groups.service.js';

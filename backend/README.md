@@ -66,6 +66,28 @@ at least 32 characters. `JWT_ACCESS_TTL_SECONDS` and
 `JWT_REFRESH_TTL_SECONDS` default to 900 and 604800 seconds. In production, set `NODE_ENV=production` and provide secrets through the
 deployment environment.
 
+Password reset mail uses the `MAIL_PROVIDER` adapter boundary. Development
+defaults to Nodemailer; without `SMTP_HOST`, it creates an Ethereal test
+account and logs a browser preview URL when an email is sent. Configure
+`SMTP_HOST`, `SMTP_PORT` (defaults to 587), `SMTP_USER`, `SMTP_PASS`, and
+`MAIL_FROM` to use an SMTP server. `MAIL_DRIVER=production` selects the
+production-provider adapter, which must be connected to a provider such as
+AWS SES, Resend, or SendGrid before use. `POST /api/v1/auth/forgot-password`
+always returns the same response for existing and unknown accounts; reset
+codes expire after 10 minutes and are invalidated after five failed attempts.
+
+Media uploads use the global `MediaFacadeService` and keep provider identifiers
+on each asset so existing objects can continue using their original adapter.
+`STORAGE_DRIVER` defaults to `s3`; provide `AWS_S3_BUCKET` and credentials through
+the AWS SDK default credential chain. `AWS_REGION` defaults to `us-east-1`.
+For MinIO, LocalStack, or an S3-compatible endpoint, set `AWS_S3_ENDPOINT` and
+optionally `AWS_S3_FORCE_PATH_STYLE=true`. Set `AWS_S3_PROVIDER_NAME=r2` (or
+`minio`) when that provider identity should be recorded, and configure
+`AWS_CDN_BASE_URL` when assets should resolve through a CDN. The `gcs` driver is
+an explicit adapter stub and returns an error until a GCS client is implemented.
+Presigned uploads accept JPEG, PNG, and WebP files up to 5 MB and expire after
+five minutes.
+
 The user feature registers a Mongoose `User` model with required `username` and
 unique, lowercase `email` fields. Mongoose manages the `createdAt` and
 `updatedAt` timestamps.

@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
 import mongoose, { Types } from 'mongoose';
 import { Group, GroupSchema, type GroupEntity } from './group.schema.js';
 import { ListGroupsQuerySchema } from './dto/list-groups-query.dto.js';

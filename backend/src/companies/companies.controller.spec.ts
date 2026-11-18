@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { AccessTokenGuard } from '../auth/access-token.guard.js';
 import { AppError } from '../common/errors/app-error.js';

@@ -24,6 +24,21 @@ export const envSchema = z.object({
     .min(32, 'JWT_REFRESH_SECRET must be at least 32 characters'),
   JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
   JWT_REFRESH_TTL_SECONDS: z.coerce.number().int().positive().default(604800),
+
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().positive().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  MAIL_FROM: z.string().optional(),
+  MAIL_DRIVER: z.enum(['nodemailer', 'production']).optional(),
+
+  STORAGE_DRIVER: z.enum(['s3', 'gcs']).default('s3'),
+  AWS_REGION: z.string().default('us-east-1'),
+  AWS_S3_BUCKET: z.string().optional(),
+  AWS_S3_ENDPOINT: z.string().url().optional(),
+  AWS_S3_FORCE_PATH_STYLE: z.enum(['true', 'false']).optional(),
+  AWS_S3_PROVIDER_NAME: z.enum(['aws-s3', 'r2', 'minio']).optional(),
+  AWS_CDN_BASE_URL: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

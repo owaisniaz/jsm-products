@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Types, type Model } from 'mongoose';
+import { Types } from 'mongoose';
+import type { Model } from 'mongoose';
 import { Group } from './group.schema.js';
 
 type ActiveGroupFilter = {

@@ -1,5 +1,5 @@
-import { ArgumentsHost } from '@nestjs/common';
-import { Request, Response } from 'express';
+import type { ArgumentsHost } from '@nestjs/common';
+import type { Request, Response } from 'express';
 import { ZodValidationException } from 'nestjs-zod';
 import { GlobalExceptionFilter } from './global-exception.filter.js';
 

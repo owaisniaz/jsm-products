@@ -1,9 +1,8 @@
 import {
-  CanActivate,
-  ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import type { Request } from 'express';
 import { CookieService } from './cookie.service.js';
 import { TokenService } from './token.service.js';

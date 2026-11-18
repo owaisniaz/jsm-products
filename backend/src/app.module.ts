@@ -10,14 +10,21 @@ import { DatabaseModule } from './database/database.module.js';
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor.js';
 import { ZodValidationPipe, ZodSerializerInterceptor } from 'nestjs-zod';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter.js';
-import { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import type { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './config.schema.js';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { IamModule } from './modules/iam/iam.module.js';
+import { OrganizationModule } from './modules/organization/organization.module.js';
+import { HrModule } from './modules/hr/hr.module.js';
+import { MailModule } from './modules/mail/mail.module.js';
+import { MediaModule } from './modules/media/media.module.js';
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: [
         process.env.NODE_ENV === 'production'
@@ -39,6 +46,11 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     UserModule,
     AuthModule,
     CompaniesModule,
+    IamModule,
+    OrganizationModule,
+    HrModule,
+    MailModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [

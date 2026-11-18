@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
 import type { Request, Response } from 'express';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
